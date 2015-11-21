@@ -21,6 +21,7 @@ import org.opencv.core.Size;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.ocrinterface.OCR;
 import org.opencv.core.Rect;
 
 import android.app.Activity;
@@ -49,7 +50,16 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     private Rect imagerect = new Rect();
     private Point base = new Point();
     private CameraBridgeViewBase mOpenCvCameraView;
+    private OCR mOCR = new OCR();
+    static {
 
+        if (!OpenCVLoader.initDebug()) {
+
+            // Handle initialization error
+
+        }
+
+    }
     private BaseLoaderCallback  mLoaderCallback = new BaseLoaderCallback(this) {
         @Override
         public void onManagerConnected(int status) {
@@ -247,16 +257,16 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
     	}
     	base.x = p.x;
     	base.y = p.y;
-    	//Log.v("junjiedebug","p.x "+p.x+ " p.y "+p.y);
     	count++;
     	if( count==5){
+    		
     		Log.i("junjiedebug","call image");
-    		//Toast.makeText(this, "startdetection", Toast.LENGTH_SHORT).show();
-    		count = 0;
+     		count = 0;
     		Bitmap bitmap = copyImage(mRgba);
         	imageCount++;
         	String fullname = getSDPath()+"/a/"+imageCount+".bmp";
         	saveBitmap(bitmap,fullname);
+        	mOCR.startOCR(bitmap);
     	}
     	
     	return true;
