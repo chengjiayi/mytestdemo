@@ -33,6 +33,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
 public class ColorBlobDetectionActivity extends Activity implements OnTouchListener, CvCameraViewListener2 {
     private static final String  TAG              = "OCVSample::Activity";
@@ -235,25 +236,29 @@ public class ColorBlobDetectionActivity extends Activity implements OnTouchListe
         Imgproc.cvtColor(pointMatHsv, pointMatRgba, Imgproc.COLOR_HSV2RGB_FULL, 4);
         return new Scalar(pointMatRgba.get(0, 0));
     }
-    private int count;
+    private int count = 0;
     private boolean filter(Point p){
     	double b = (p.x-base.x)*(p.x-base.x)+(p.y-base.y)*(p.y-base.y);
     	b = Math.sqrt(b);
     	if(b < 20){
-    		return false;
+    		count++;
+    	}else{
+    		count = 0;
     	}
     	base.x = p.x;
     	base.y = p.y;
-    	Log.v("junjiedebug","p.x "+p.x+ " p.y "+p.y);
+    	//Log.v("junjiedebug","p.x "+p.x+ " p.y "+p.y);
     	count++;
-    	if(count%5==0){
+    	if( count==5){
     		Log.i("junjiedebug","call image");
+    		//Toast.makeText(this, "startdetection", Toast.LENGTH_SHORT).show();
     		count = 0;
     		Bitmap bitmap = copyImage(mRgba);
         	imageCount++;
         	String fullname = getSDPath()+"/a/"+imageCount+".bmp";
         	saveBitmap(bitmap,fullname);
     	}
+    	
     	return true;
     }
     private void preImage(){
